@@ -1,0 +1,3 @@
+[submodule "MiCo-Lib"]
+	path = MiCo-Lib
+	url = git@github.com:HKUSTGZ-MICS-LYU/MiCo-Lib.git

@@ -1,0 +1,7 @@
+build
+
+*.elf
+*.asm
+
+model.bin
+model.h
