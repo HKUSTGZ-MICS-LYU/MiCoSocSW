@@ -8,17 +8,20 @@
 #include "mico_nn.h"
 #include "mico_qnn.h"
 
-#define N 32
-#define K 32
+#define N 4
+#define K 256
 #define M 32
+
+qbyte x_array[N*K];
+qbyte w_array[K*M];
 
 int main(){
     
     Tensor2D_Q8 x, w;
     printf("Hello MiCo!\n");
 
-    x.data = (int8_t*)malloc(N*K*sizeof(int8_t));
-    w.data = (int8_t*)malloc(K*M*sizeof(int8_t));
+    x.data = x_array;
+    w.data = w_array;
 
     x.shape[0] = N;
     x.shape[1] = K;

@@ -27,7 +27,7 @@ MAIN = main
 TEST_NUM ?= 1 # Not used by host
 
 # RISC-V
-RISCV_PREFIX = riscv64-unknown-elf
+RISCV_PREFIX ?= riscv64-unknown-elf
 RISCV_SOURCE ?= 
 
 # Targets
