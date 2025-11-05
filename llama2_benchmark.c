@@ -714,6 +714,9 @@ float* forward(Transformer* transformer, int token, int pos) {
             x[i] += s->xb[i];
         }
     }
+    long layer_time = MiCo_time() - forward_start;
+    long layer_matmul_time = QMATMUL_TIMER;
+    long layer_quant_time = QUANT_TIMER;
     // final rmsnorm
     rmsnorm(x, x, w->rms_final_weight, dim);
     // classifier into logits
@@ -731,14 +734,27 @@ float* forward(Transformer* transformer, int token, int pos) {
     #endif
     long forward_end = MiCo_time();
     #ifdef RISCV_VEXII
-    printf("Final Classifier Time: %ld \n", forward_end - final_start);
-    printf("Forward Time: %ld \n", (forward_end - forward_start));
+    long forward_time = forward_end - forward_start;
+    long final_classifier_time = forward_end - final_start;
+    printf("Final Classifier Time: %ld \n", final_classifier_time);
+    printf("Forward Time: %ld \n", forward_time);
     printf("QMatMul Time: %ld \n", QMATMUL_TIMER);
     printf("Quant Time: %ld \n", QUANT_TIMER);
     printf("Attention Time: %ld \n", ATTENTION_TIMER);
     printf("RMSNorm Time: %ld \n", RMSNORM_TIMER);
     printf("RoPE Time: %ld \n", ROPE_TIMER);
     printf("Softmax Time: %ld \n", SOFTMAX_TIMER);
+
+    const int nlayers = 6;
+
+    long estimated_end2end = layer_time * nlayers + final_classifier_time;
+    printf("Estimated End2End Time %ld \n", estimated_end2end);
+    long end2end_matmul_time = layer_matmul_time * nlayers + (QMATMUL_TIMER - layer_matmul_time);
+    printf("Estimated End2End MatMul Time %ld \n", end2end_matmul_time);
+    long end2end_attention_time = ATTENTION_TIMER * nlayers;
+    printf("Estimated End2End Attention Time %ld \n", end2end_attention_time);
+    long end2end_quant_time = layer_quant_time * nlayers + (QUANT_TIMER - layer_quant_time);
+    printf("Estimated End2End Quant Time %ld \n", end2end_quant_time);
     #endif
     return s->logits;
 }
