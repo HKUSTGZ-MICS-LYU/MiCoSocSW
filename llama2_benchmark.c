@@ -232,8 +232,6 @@ size_t init_quant_weight(DataType* w, char* ptr, int n_layers, int n, int m){
     for (int i = 0; i < n_layers; i++) {
         w[i].shape[0] = n;
         w[i].shape[1] = m;
-        w[i].scale = *(float*)ptr;
-        ptr += sizeof(float);
         w[i].data = (WeightType*) ptr;
         ptr += n * m * sizeof(WeightType) / (8 / w[i].wq);
     }
